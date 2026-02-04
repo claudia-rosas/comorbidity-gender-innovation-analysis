@@ -1,0 +1,49 @@
+# Large data files (don't push to GitHub)
+*.txt
+pubmed_data.txt
+*.json
+*.json.gz
+pubmed_data.json.gz
+
+# Analysis output (regenerable)
+analysis_output/
+output/
+*.pkl
+checkpoint_*.pkl
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.log
+*.tmp
+temp/
+tmp/
+
+# Large output files
+*.png
+*.jpg
+figures/
