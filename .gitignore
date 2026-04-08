@@ -1,5 +1,6 @@
 # Large data files (don't push to GitHub)
 *.txt
+*.7z
 pubmed_data.txt
 *.json
 *.json.gz
