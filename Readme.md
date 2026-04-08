@@ -125,9 +125,9 @@ If you use this code, please cite:
 ```bibtex
 @software{comorbidity_gender_analysis,
   title = {Gendered Innovations in Comorbidity Research},
-  author = {[Your Name]},
+  author = {Claudia Rosas Mendoza},
   year = {2026},
-  url = {https://github.com/yourusername/comorbidity-gender-analysis}
+  url = {https://github.com/claudia-rosas/comorbidity-gender-analysis}
 }
 ```
 
@@ -140,7 +140,7 @@ Gender-diverse teams produce more novel and higher-impact scientific ideas.
 
 [Claudia Rosas Mendoza, PhD] - [claudia.rosas@bsc.es]
 
-Project Link: https://github.com/yourusername/comorbidity-gender-analysis
+Project Link: https://github.com/claudia-rosas/comorbidity-gender-analysis
 
 ## 📜 License
 
