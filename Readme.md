@@ -138,7 +138,7 @@ Gender-diverse teams produce more novel and higher-impact scientific ideas.
 
 ## 📧 Contact
 
-[Your Name] - [your.email@university.edu]
+[Claudia Rosas Mendoza, PhD] - [claudia.rosas@bsc.es]
 
 Project Link: https://github.com/yourusername/comorbidity-gender-analysis
 
