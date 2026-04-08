@@ -73,7 +73,7 @@ def txt_to_json(input_file, output_file, compress=True):
     
     # Save JSON
     if compress:
-        # Compressed: 500MB TXT → ~100MB JSON.gz
+        # Compressed: 501MB TXT → ~100MB JSON.gz
         with gzip.open(output_file, 'wt', encoding='utf-8') as f:
             json.dump(papers, f, indent=2)
         print(f"  ✓ Saved compressed JSON: {output_file}")

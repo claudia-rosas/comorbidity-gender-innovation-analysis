@@ -23,6 +23,7 @@ class Publication:
     mesh_terms: List[str]
     title: str = ""
     abstract: str = ""
+    journal: str = ""
     
     def to_dict(self):
         return asdict(self)
@@ -101,8 +102,10 @@ class LargePubMedParser:
             if len(line) > 5 and line[4] == '-':
                 # Save previous field
                 if current_field:
-                    self._save_field(current_field, current_value.strip(),
-                                   pmid, year, authors, mesh_terms, title, abstract)
+                    pmid, year, authors, mesh_terms, title, abstract = self._save_field(
+                        current_field, current_value.strip(),
+                        pmid, year, authors, mesh_terms, title, abstract
+                    )
                 
                 current_field = line[:4].strip()
                 current_value = line[6:].strip()
