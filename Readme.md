@@ -1,153 +1,188 @@
 # Gendered Innovations in Comorbidity Research
 
-Analysis of how gender diversity in research teams influences novelty and research directions in comorbidity studies.
+## Research Question
 
-## 📊 Overview
+> When a woman enters a research group, does innovation change?  
+> Do new topics arise? Do new combinations of comorbidities appear?
 
-This project analyzes 100,000+ PubMed papers on comorbidities to investigate:
-- How mixed-gender teams discover novel disease combinations
-- Temporal trends in team composition (1980-2024)
-- Sex/gender-specific research patterns
-- Inverse comorbidity discoveries
+This project analyzes 135,688 PubMed comorbidity papers to test whether the addition of women to previously all-male research groups is associated with increased novelty in disease combination discovery.
 
-Based on Yang et al. (2022) PNAS framework: [Gender-diverse teams produce more novel and higher-impact scientific ideas](https://doi.org/10.1073/pnas.2200841119)
+Theoretical framework: Yang et al. (2022), *PNAS* — gender-diverse teams produce more novel and higher-impact scientific ideas.
 
-## 🎯 Key Findings
+---
 
-- Mixed-gender teams discover **15-25% more novel disease combinations**
-- **30-50% more** sex/gender-specific analysis in diverse teams
-- Inverse comorbidities studied **2-3× more** by mixed teams
-- Female participation increased from **15% (1980s)** to **40% (2020s)**
+## Pipeline
 
-## 🚀 Quick Start
+### Step 1 — Data Conversion
+Convert raw PubMed MEDLINE `.txt` to structured `.json.gz`.
 
-### 1. Download PubMed Data
 ```bash
-# Search PubMed for: "Comorbidity"[MeSH]
-# Export as: MEDLINE format
-# Save as: pubmed_data.txt
+python code/parse_to_json.py data/comorbidity_all.txt data/comorbidity_all.json.gz
 ```
 
-### 2. Install Requirements
+**Output:** `data/comorbidity_all.json.gz` (100MB, 135,688 papers)
+
+---
+
+### Step 2 — Name Enrichment *(in development)*
+~51% of authors appear with initials only (e.g. `Smith J`). PubMed XML records store full `ForeName` fields — this step queries PubMed by PMID to recover full names, then matches them back using Jaro-Winkler similarity on last name + neighboring author context.
+
 ```bash
-pip install matplotlib seaborn numpy pandas scipy
+python code/enrich_author_names.py
 ```
 
-### 3. Run Analysis
+**Dependencies:** `biopython`, `jellyfish`
+
+> **Constraint:** To be documented after testing.
+
+---
+
+### Step 3 — Gender Inference *(in development)*
+Infer gender from recovered full names using a multi-stage approach:
+1. `gender-guesser` — free, covers ~45,000 names, reliable for Western names
+2. NamSor API (free tier, 2,500/month) — fallback for ambiguous cases
+
 ```bash
-# Option A: Parse and analyze in one step (15 min)
-python process_large_dataset.py pubmed_data.txt
-
-# Option B: Parse to JSON first (recommended)
-python parse_to_json.py pubmed_data.txt pubmed_data.json.gz
-python analyze_json.py pubmed_data.json.gz
-
-# Generate visualizations
-python generate_visualizations.py
+python code/infer_gender.py
 ```
 
-## 📁 Project Structure
-```
-comorbidity-analysis/
-├── README.md                          # This file
-├── QUICK_START.md                     # Detailed usage guide
-├── WINDOWS_VSCODE_SETUP.md            # Windows setup instructions
-├── research_protocol.md               # Full methodology (40+ pages)
-│
-├── Scripts/
-│   ├── process_large_dataset.py      # Main analysis engine
-│   ├── parse_to_json.py              # TXT → JSON converter
-│   ├── analyze_json.py               # Fast JSON analysis
-│   └── generate_visualizations.py     # Create figures
-│
-├── Visualizations/
-│   ├── knowledge_graph.html          # Interactive graph
-│   └── knowledge_graph_structure.html # Concept map
-│
-└── .gitignore                        # Exclude large files
+> **Constraint:** To be documented after testing.
 
-# NOT included in repo (download yourself):
-# - pubmed_data.txt (500MB - too large for GitHub)
-# - analysis_output/ (regenerable)
+---
+
+### Step 4 — Analysis from JSON
+Run team composition, novelty, and comorbidity analysis directly from `.json.gz`.
+
+```bash
+python code/analyze_from_json.py data/comorbidity_all.json.gz
 ```
 
-## 📈 Example Results
+**Output:** `analysis_output/final_report.json`
 
-### Team Composition Over Time
-![Temporal Trends](docs/example_temporal_trends.png)
+---
 
-### Novel Discoveries by Team Type
-- All-male teams: 47.0% of papers, 45.2% of novel discoveries
-- Mixed-gender teams: 32.0% of papers, **41.5% of novel discoveries** ⭐
-- Enrichment: **1.30×**
+### Step 5 — Research Group Detection *(in development)*
+Cluster recurring co-authors into stable research groups using co-authorship networks. Groups are defined as connected components across a sliding time window (minimum 3 papers together).
 
-## 🔬 Methodology
-
-1. **Data Source:** PubMed/MEDLINE
-2. **Sample:** ~100,000 comorbidity papers (1980-2024)
-3. **Gender Inference:** Name-based matching (80-85% accuracy)
-4. **Novelty Detection:** First appearance of disease combination
-5. **Statistical Analysis:** Chi-square, logistic regression, time series
-
-See `research_protocol.md` for complete methodology.
-
-## 📚 Documentation
-
-- **[QUICK_START.md](QUICK_START.md)** - Usage guide
-- **[WINDOWS_VSCODE_SETUP.md](WINDOWS_VSCODE_SETUP.md)** - Windows setup
-- **[research_protocol.md](research_protocol.md)** - Full methodology
-
-## 🎨 Interactive Visualizations
-
-Open in browser:
-- `knowledge_graph.html` - Interactive network graph
-- `knowledge_graph_structure.html` - Detailed concept map
-
-## 📊 Data Requirements
-
-**Not included** (download separately):
-- PubMed data file (~500MB)
-- Your own institutional data if analyzing specific institutions
-
-**Data format:** MEDLINE (from PubMed export)
-
-## 🤝 Contributing
-
-Contributions welcome! Areas of interest:
-- Improved gender inference (international names)
-- Additional analyses (subfield comparisons)
-- Validation studies
-- Extension to other medical domains
-
-## 📄 Citation
-
-If you use this code, please cite:
-```bibtex
-@software{comorbidity_gender_analysis,
-  title = {Gendered Innovations in Comorbidity Research},
-  author = {Claudia Rosas Mendoza},
-  year = {2026},
-  url = {https://github.com/claudia-rosas/comorbidity-gender-analysis}
-}
+```bash
+python code/detect_research_groups.py
 ```
 
-**Original framework:**
-Yang, Y., Tian, T. Y., Woodruff, T. K., Jones, B. F., & Uzzi, B. (2022). 
-Gender-diverse teams produce more novel and higher-impact scientific ideas. 
+> **Constraint:** To be documented after testing.
+
+---
+
+### Step 6 — Event Detection *(in development)*
+Identify "treatment events": research groups that were all-male for ≥3 years before a woman joined.
+
+```bash
+python code/detect_entry_events.py
+```
+
+> **Constraint:** To be documented after testing.
+
+---
+
+### Step 7 — Innovation Measurement *(in development)*
+For each group, compare output before vs. after the entry event:
+- New MeSH combinations never used by that group before
+- New comorbidity pairs/triplets
+- Breadth of disease topics
+
+```bash
+python code/measure_innovation.py
+```
+
+> **Constraint:** To be documented after testing.
+
+---
+
+### Step 8 — Statistical Analysis *(in development)*
+Difference-in-differences design:
+- **Treatment group:** groups that added a woman
+- **Control group:** all-male groups that never added a woman
+- **Test:** do treated groups show more innovation post-entry, controlling for group size?
+
+```bash
+python code/statistical_analysis.py
+```
+
+> **Constraint:** To be documented after testing.
+
+---
+
+### Step 9 — Visualizations
+Generate all figures from `final_report.json`.
+
+```bash
+python code/generate_visualizations.py
+```
+
+**Output:** `analysis_output/figures/` — 5 publication-quality figures.
+
+---
+
+## Known Constraints
+
+> This section will be populated with validated limitations as each pipeline step is tested.
+
+- [ ] Step 2: Name enrichment coverage rate (% of initials resolved)
+- [ ] Step 3: Gender inference accuracy and unknown rate after enrichment
+- [ ] Step 5: Research group detection — minimum group size threshold
+- [ ] Step 6: Event detection — number of qualifying treatment events found
+- [ ] Step 7: Innovation measurement — baseline novelty rate
+- [ ] Step 8: Statistical power — sample size of treatment vs. control groups
+
+---
+
+## Repository Structure
+
+```
+ComorbidityAnalysis/
+├── code/
+│   ├── parse_to_json.py            # Step 1: MEDLINE → JSON.gz
+│   ├── analyze_from_json.py        # Step 4: Analysis from JSON
+│   ├── generate_visualizations.py  # Step 9: Figures
+│   ├── process_large_dataset.py    # Core analysis engine
+│   ├── inspect_json.py             # Dataset inspection utility
+│   └── debug_json.py               # Debugging utility
+├── data/
+│   └── comorbidity_all.json.gz     # Main dataset (not tracked in git)
+├── analysis_output/
+│   ├── final_report.json           # Analysis results
+│   └── figures/                    # Generated visualizations
+├── methodology_study_guide.md      # Methodology explained for study
+└── README.md                       # This file
+```
+
+---
+
+## Data
+
+- **Source:** PubMed MEDLINE, search term `"Comorbidity"[MeSH]`
+- **Size:** 135,688 papers, 862,962 unique authors
+- **Year range:** to be confirmed after analysis
+- **Format:** `.json.gz` (structured, compressed)
+- **Not tracked in git:** raw `.txt`, `.json.gz`, `.7z` files (see `.gitignore`)
+
+---
+
+## Dependencies
+
+```bash
+pip install biopython gender-guesser jellyfish matplotlib seaborn numpy
+```
+
+---
+
+## Reference
+
+Yang, Y., Tian, T. Y., Woodruff, T. K., Jones, B. F., & Uzzi, B. (2022).
+Gender-diverse teams produce more novel and higher-impact scientific ideas.
 *Proceedings of the National Academy of Sciences*, 119(36), e2200841119.
 
-## 📧 Contact
+---
 
-[Claudia Rosas Mendoza, PhD] - [claudia.rosas@bsc.es]
+## Contact
 
-Project Link: https://github.com/claudia-rosas/comorbidity-gender-analysis
-
-## 📜 License
-
-MIT License - see LICENSE file for details
-
-## 🙏 Acknowledgments
-
-- Yang et al. (2022) for the gendered innovations framework
-- PubMed/MEDLINE for data access
-- Anthropic's Claude for assistance with code development
+Claudia Rosas Mendoza — claudia.rosas@bsc.es
